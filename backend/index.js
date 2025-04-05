@@ -4,7 +4,7 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/AuthRoutes.js';
 import travelPlanRoutes from './routes/TravelPlanRoutes.js';
 import placeRoutes from './routes/placeRoutes.js';
-
+import chatRoutes from './routes/chatBotRoute.js';
 const app = express();
 
 // Middleware
@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', userRoutes);
 app.use("/api/travelplans", travelPlanRoutes);
 app.use("/api/map", placeRoutes);
+app.use("/api/chat", chatRoutes);
 
 // Start server
 const PORT = 8000;
