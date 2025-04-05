@@ -366,6 +366,7 @@ Attraction:
 - Include realistic weather forecasts for the destination.
 - Structure must be clean, valid minified JSON — no additional text outside of JSON.
 - All the latitude and longitude coordinates must be of the accurate location and have 6 digits after decimal
+- The itinerary should not contain any activity regarding the inbound and outbound
 
 Only respond with the completed minified JSON document. Do not include explanations or extra commentary.
 `;

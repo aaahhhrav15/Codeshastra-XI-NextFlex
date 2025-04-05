@@ -74,3 +74,98 @@ export async function store(req, res) {
     ["car"]
   )
  */
+
+export async function getTravelOptions(req, res) {
+  const source = req.body.source;
+  const destination = req.body.destination;
+  const startDate = req.body.startDate;
+  const endDate = req.body.endDate;
+  const travelClass = req.body.travelClass;
+  const passengerCount = req.body.passengerCount;
+
+  const sourceAirportCode = await getAirportCode(source);
+  const destinationAirportCode = await getAirportCode(destination);
+
+  const data = await getFlights(
+    sourceAirportCode,
+    destinationAirportCode,
+    startDate,
+    endDate,
+    travelClass,
+    passengerCount
+  );
+
+  console.log(data);
+
+  res.status(200).json(data);
+}
+
+async function getFlights(
+  source,
+  destination,
+  start,
+  end,
+  travelClass,
+  passengerCount
+) {
+  const url = `https://agoda-com.p.rapidapi.com/flights/search-roundtrip?origin=${source}&destination=${destination}&departureDate=${start}&returnDate=${end}&sort=Price&limit=5&adults=${passengerCount}&cabinType=${travelClass}&stops=0&currency=INR`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "1c0b23dc25msh78041305e95e13ep192037jsnda2daecfedfd",
+      "x-rapidapi-host": "agoda-com.p.rapidapi.com",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.json();
+    const dataArray = [];
+    console.log(result)
+    result.data.bundles.forEach((item) => {
+      const obj = {
+        price: item.bundlePrice[0].price.inr.display.averagePerPax.allInclusive,
+        arrivalTime: item.outboundSlice.segments[0].arrivalDateTime,
+        departureTime: item.outboundSlice.segments[0].departDateTime,
+        duration: item.outboundSlice.segments[0].duration,
+        flightNumber: item.outboundSlice.segments[0].flightNumber,
+        arrivalCity:
+          item.outboundSlice.segments[0].airportContent.arrivalCityName,
+        departureCity:
+          item.outboundSlice.segments[0].airportContent.departureCityName,
+        arrivalAirport:
+          item.outboundSlice.segments[0].airportContent.arrivalAirportName,
+        departureAirport:
+          item.outboundSlice.segments[0].airportContent.departureAirportName,
+        cabinClass: item.outboundSlice.segments[0].cabinClassContent.cabinName,
+        carrierCode: item.outboundSlice.segments[0].carrierContent.carrierCode,
+        carrierIcon: item.outboundSlice.segments[0].carrierContent.carrierIcon,
+        carrierName: item.outboundSlice.segments[0].carrierContent.carrierName,
+      };
+      dataArray.push(obj);
+    });
+    return dataArray;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function getAirportCode(query) {
+  const url =
+    `https://agoda-com.p.rapidapi.com/flights/auto-complete?query=${query}`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "1c0b23dc25msh78041305e95e13ep192037jsnda2daecfedfd",
+      "x-rapidapi-host": "agoda-com.p.rapidapi.com",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.json();
+    return result.data[0].airports[0].code;
+  } catch (error) {
+    return error;
+  }
+}

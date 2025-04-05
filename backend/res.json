@@ -1,252 +1,248 @@
 {
-  "overview": {
-    "source": "Mumbai",
-    "destination": "Matheran",
-    "duration": 2,
-    "totalBudget": {
-      "amount": 5000,
-      "currency": "INR"
+  "message": "Travel plan saved successfully!",
+  "data": {
+    "overview": {
+      "source": "Mumbai",
+      "destination": "Lonavala",
+      "duration": 2,
+      "totalBudget": {
+        "amount": 5000,
+        "currency": "INR"
+      },
+      "startDate": "2025-05-01",
+      "endDate": "2025-05-02"
     },
-    "startDate": "2025-05-01",
-    "endDate": "2025-05-02"
-  },
-  "itinerary": [
-    {
-      "day": 1,
-      "date": "2025-05-01",
-      "location": "Matheran",
-      "activities": [
-        {
-          "time": "07:00",
-          "description": "Depart from Mumbai by car.",
-          "location": "Mumbai",
-          "cost": {
-            "amount": 1500,
-            "currency": "INR"
+    "itinerary": [
+      {
+        "day": 1,
+        "date": "2025-05-01",
+        "location": "Lonavala",
+        "activities": [
+          {
+            "time": "08:00",
+            "description": "Depart from Mumbai by car.",
+            "location": "Mumbai",
+            "coordinates": {
+              "lat": 19.07609,
+              "long": 72.877426
+            },
+            "cost": {
+              "amount": 1500,
+              "currency": "INR"
+            },
+            "duration": "3 hours",
+            "notes": "Drive to Lonavala. Account for potential traffic."
           },
-          "duration": "3 hours",
-          "notes": "Start early to avoid traffic. Drive to Dasturi Naka as cars are not allowed inside Matheran."
-        },
-        {
-          "time": "10:00",
-          "description": "Arrive at Dasturi Naka and take a horse or a hand-pulled rickshaw to the hotel.",
-          "location": "Dasturi Naka, Matheran",
-          "cost": {
-            "amount": 300,
-            "currency": "INR"
+          {
+            "time": "11:00",
+            "description": "Visit Bhaja Caves.",
+            "location": "Bhaja Caves",
+            "coordinates": {
+              "lat": 18.74752,
+              "long": 73.492714
+            },
+            "cost": {
+              "amount": 200,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Explore the ancient Buddhist caves. Moderate climbing involved."
           },
-          "duration": "30 minutes",
-          "notes": "Bargain for a reasonable price."
-        },
-        {
-          "time": "10:30",
-          "description": "Check into hotel and freshen up.",
-          "location": "Hotel in Matheran",
-          "cost": {
-            "amount": 1500,
-            "currency": "INR"
+          {
+            "time": "13:00",
+            "description": "Lunch at a local vegetarian restaurant.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 300,
+              "currency": "INR"
+            },
+            "duration": "1 hour",
+            "notes": "Enjoy traditional Maharashtrian vegetarian cuisine."
           },
-          "duration": "1 hour",
-          "notes": "Pre-booked mid-range hotel."
-        },
-        {
-          "time": "11:30",
-          "description": "Lunch at a local vegetarian restaurant.",
-          "location": "Matheran Market",
-          "cost": {
-            "amount": 200,
-            "currency": "INR"
+          {
+            "time": "14:00",
+            "description": "Visit Karla Caves.",
+            "location": "Karla Caves",
+            "coordinates": {
+              "lat": 18.752344,
+              "long": 73.482216
+            },
+            "cost": {
+              "amount": 200,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Explore the largest Hinayana Buddhist Chaitya (prayer hall) in India."
           },
-          "duration": "1 hour",
-          "notes": "Explore vegetarian options."
-        },
-        {
-          "time": "12:30",
-          "description": "Relaxation at Louisa Point.",
-          "location": "Louisa Point",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
+          {
+            "time": "16:00",
+            "description": "Check into hotel and relax.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 0,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Check into pre-booked hotel. Rest and freshen up."
           },
-          "duration": "2 hours",
-          "notes": "Enjoy the scenic view."
-        },
-        {
-          "time": "14:30",
-          "description": "Visit Charlotte Lake.",
-          "location": "Charlotte Lake",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
+          {
+            "time": "18:00",
+            "description": "Visit Lion's Point.",
+            "location": "Lion's Point",
+            "coordinates": {
+              "lat": 18.792492,
+              "long": 73.387726
+            },
+            "cost": {
+              "amount": 0,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Enjoy the sunset and scenic views."
           },
-          "duration": "2 hours",
-          "notes": "Enjoy the serene atmosphere."
-        },
-        {
-          "time": "16:30",
-          "description": "Explore Echo Point.",
-          "location": "Echo Point",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
+          {
+            "time": "20:00",
+            "description": "Dinner at a local restaurant.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 300,
+              "currency": "INR"
+            },
+            "duration": "1 hour",
+            "notes": "Have dinner at a restaurant."
+          }
+        ]
+      },
+      {
+        "day": 2,
+        "date": "2025-05-02",
+        "location": "Lonavala",
+        "activities": [
+          {
+            "time": "08:00",
+            "description": "Breakfast at the hotel.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 0,
+              "currency": "INR"
+            },
+            "duration": "1 hour",
+            "notes": "Enjoy breakfast."
           },
-          "duration": "1.5 hours",
-          "notes": "Try yelling to hear your echo."
-        },
-        {
-          "time": "18:00",
-          "description": "Return to hotel, relax.",
-          "location": "Hotel",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
+          {
+            "time": "09:00",
+            "description": "Visit Tiger Point.",
+            "location": "Tiger Point",
+            "coordinates": {
+              "lat": 18.7834,
+              "long": 73.394005
+            },
+            "cost": {
+              "amount": 0,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Enjoy scenic views and echo point."
           },
-          "duration": "2 hours",
-          "notes": ""
-        },
-        {
-          "time": "20:00",
-          "description": "Dinner at Hotel.",
-          "location": "Hotel",
-          "cost": {
-            "amount": 300,
-            "currency": "INR"
+          {
+            "time": "11:00",
+            "description": "Visit Bushy Dam.",
+            "location": "Bushy Dam",
+            "coordinates": {
+              "lat": 18.772844,
+              "long": 73.405563
+            },
+            "cost": {
+              "amount": 0,
+              "currency": "INR"
+            },
+            "duration": "2 hours",
+            "notes": "Visit the dam and enjoy the waterfalls (seasonal)."
           },
-          "duration": "1 hour",
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "day": 2,
-      "date": "2025-05-02",
-      "location": "Matheran",
-      "activities": [
-        {
-          "time": "08:00",
-          "description": "Breakfast at the hotel.",
-          "location": "Hotel",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
+          {
+            "time": "13:00",
+            "description": "Lunch at a local vegetarian restaurant.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 300,
+              "currency": "INR"
+            },
+            "duration": "1 hour",
+            "notes": "Have lunch."
           },
-          "duration": "1 hour",
-          "notes": "Included in the hotel package."
-        },
-        {
-          "time": "09:00",
-          "description": "Visit Panorama Point.",
-          "location": "Panorama Point",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
-          },
-          "duration": "2.5 hours",
-          "notes": "Enjoy the panoramic view of the surrounding hills."
-        },
-        {
-          "time": "11:30",
-          "description": "Lunch at local restaurant.",
-          "location": "Matheran Market",
-          "cost": {
-            "amount": 200,
-            "currency": "INR"
-          },
-          "duration": "1 hour",
-          "notes": "Try local snacks."
-        },
-        {
-          "time": "12:30",
-          "description": "Shopping at Matheran Market.",
-          "location": "Matheran Market",
-          "cost": {
-            "amount": 200,
-            "currency": "INR"
-          },
-          "duration": "1.5 hours",
-          "notes": "Buy local handicrafts and souvenirs."
-        },
-        {
-          "time": "14:00",
-          "description": "Check out from the hotel.",
-          "location": "Hotel in Matheran",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
-          },
-          "duration": "30 minutes",
-          "notes": ""
-        },
-        {
-          "time": "14:30",
-          "description": "Travel back to Dasturi Naka by horse or hand-pulled rickshaw.",
-          "location": "Dasturi Naka, Matheran",
-          "cost": {
-            "amount": 300,
-            "currency": "INR"
-          },
-          "duration": "30 minutes",
-          "notes": "Bargain for a reasonable price."
-        },
-        {
-          "time": "15:00",
-          "description": "Depart from Dasturi Naka to Mumbai by car.",
-          "location": "Dasturi Naka",
-          "cost": {
-            "amount": 1500,
-            "currency": "INR"
-          },
-          "duration": "3 hours",
-          "notes": "Drive safely."
-        },
-        {
-          "time": "18:00",
-          "description": "Arrive back in Mumbai.",
-          "location": "Mumbai",
-          "cost": {
-            "amount": 0,
-            "currency": "INR"
-          },
-          "duration": "0 hours",
-          "notes": ""
-        }
-      ]
-    }
-  ],
-  "budgetBreakdown": {
-    "transportation": 3300,
-    "accommodation": 1500,
-    "activities": 0,
-    "food": 700,
-    "miscellaneous": 0,
-    "total": 5500
-  },
-  "travelTips": [
-    "Matheran is an eco-sensitive zone, so vehicles are not allowed inside the main area. You'll need to walk, ride a horse, or take a hand-pulled rickshaw.",
-    "Wear comfortable shoes as you'll be doing a lot of walking.",
-    "Carry water and snacks, especially if you are planning to trek to various points.",
-    "Bargain with the horse and rickshaw pullers for a reasonable price.",
-    "Check weather conditions before you go, especially during the monsoon season.",
-    "Carry insect repellent.",
-    "Matheran has limited ATM facilities. Carry sufficient cash.",
-    "Book your accommodation in advance, especially during peak season."
-  ],
-  "weatherForecast": [
-    {
-      "date": "2025-05-01",
-      "condition": "Sunny",
-      "temperature": {
-        "high": 35,
-        "low": 25
+          {
+            "time": "14:00",
+            "description": "Departure to Mumbai.",
+            "location": "Lonavala",
+            "coordinates": {
+              "lat": 18.7533,
+              "long": 73.414307
+            },
+            "cost": {
+              "amount": 1500,
+              "currency": "INR"
+            },
+            "duration": "3 hours",
+            "notes": "Drive back to Mumbai. Account for potential traffic."
+          }
+        ]
       }
+    ],
+    "budgetBreakdown": {
+      "transportation": 3000,
+      "accommodation": 0,
+      "activities": 400,
+      "food": 900,
+      "miscellaneous": 700,
+      "total": 5000
     },
-    {
-      "date": "2025-05-02",
-      "condition": "Sunny",
-      "temperature": {
-        "high": 36,
-        "low": 26
+    "travelTips": [
+      "Carry light cotton clothes.",
+      "Stay hydrated.",
+      "Bargain while shopping.",
+      "Carry mosquito repellent.",
+      "Wear comfortable shoes for trekking."
+    ],
+    "weatherForecast": [
+      {
+        "date": "2025-05-01",
+        "condition": "Sunny",
+        "temperature": {
+          "high": 35,
+          "low": 25
+        }
+      },
+      {
+        "date": "2025-05-02",
+        "condition": "Partly Cloudy",
+        "temperature": {
+          "high": 34,
+          "low": 24
+        }
       }
-    }
-  ]
+    ],
+    "owner": "67f0fedd136dad2d2b48e219",
+    "_id": "67f1150d407bdfae728c8523",
+    "__v": 0
+  }
 }
