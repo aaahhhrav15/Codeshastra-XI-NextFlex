@@ -3,7 +3,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/AuthRoutes.js';
 import travelPlanRoutes from './routes/TravelPlanRoutes.js';
-
+import placeRoutes from './routes/placeRoutes.js';
 
 const app = express();
 
@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 // User Operation
 app.use('/api/auth', userRoutes);
 app.use("/api/travelplans", travelPlanRoutes);
+app.use("/api/map", placeRoutes);
 
 // Start server
 const PORT = 8000;
