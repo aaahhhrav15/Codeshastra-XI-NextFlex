@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/AuthRoutes');
+const travelPlanRoutes = require("./routes/TravelPlanRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 
 // User Operation
 app.use('/api/auth', userRoutes);
+app.use("/api/travelplans", travelPlanRoutes);
 
 // Start server
 const PORT = 8000;
