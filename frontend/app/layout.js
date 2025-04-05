@@ -69,7 +69,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { ClerkProvider } from "@clerk/nextjs";
 import dynamic from "next/dynamic";
 import { Toaster } from "sonner";
 import { usePathname } from "next/navigation";
@@ -96,7 +95,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={inter.className}>
-        <ClerkProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -126,7 +124,6 @@ export default function RootLayout({ children }) {
               </div>
             )}
           </ThemeProvider>
-        </ClerkProvider>
       </body>
     </html>
   );

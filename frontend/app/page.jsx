@@ -1,6 +1,7 @@
 'use client'; // Needed for useRouter in app/page.js
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import Image from 'next/image'; // If using CRA, replace this with a regular <img />
 import { Button } from '@/components/ui/button';
@@ -18,66 +19,50 @@ import {
 export default function Home() {
   const router = useRouter();
 
+  
+
   const handlePlanTrip = () => router.push('/plan-trip');
   const handleViewTrips = () => router.push('/my-trips');
-  
+
 
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navigation */}
-      {/* <header className="w-full bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Globe className="h-6 w-6 mr-2" />
-            <span className="font-semibold text-lg">Waypoint</span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">Plan Trip</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">My Trips</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">Login</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">Support</a>
-            <a href="#" className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm">Contact</a>
-          </nav>
-        </div>
-      </header> */}
-
-
 
       <section className="relative bg-[#dfd0d0] overflow-hidden pb-20">
-  {/* Main Content Container */}
-  <div className="container mx-auto flex flex-col md:flex-row items-center min-h-[80vh] px-4 relative z-10">
-    {/* Left Content */}
-    <div className="md:w-1/2 flex flex-col justify-center gap-6 py-20">
-      <button className="bg-white text-gray-700 px-6 py-2 rounded-full text-md w-fit shadow">
-        Discover
-      </button>
-      <h1 className="text-5xl md:text-6xl font-serif italic font-bold leading-tight">
-        Intelligent Travel
-      </h1>
-      <p className="text-gray-700 text-lg max-w-md">
-        Unlock the world's most breathtaking destinations with our Intelligent Travel Planner. Explore the hidden gems, plan your dream itinerary, and embark on an unforgettable journey.
-      </p>
-      <button className="bg-white text-gray-900 px-10 py-4 rounded-md font-semibold text-md shadow w-fit">
-        Start Planning
-      </button>
-    </div>
+        {/* Main Content Container */}
+        <div className="container mx-auto flex flex-col md:flex-row items-center min-h-[80vh] px-4 relative z-10">
+          {/* Left Content */}
+          <div className="md:w-1/2 flex flex-col justify-center gap-6 py-20">
+            <button className="bg-white text-gray-700 px-6 py-2 rounded-full text-md w-fit shadow">
+              Discover
+            </button>
+            <h1 className="text-5xl md:text-6xl font-serif italic font-bold leading-tight">
+              Intelligent Travel
+            </h1>
+            <p className="text-gray-700 text-lg max-w-md">
+              Unlock the world's most breathtaking destinations with our Intelligent Travel Planner. Explore the hidden gems, plan your dream itinerary, and embark on an unforgettable journey.
+            </p>
+            <button className="bg-white text-gray-900 px-10 py-4 rounded-md font-semibold text-md shadow w-fit">
+              Start Planning
+            </button>
+          </div>
 
-    {/* Hero Image */}
-    <div className="md:absolute top-1/2 md:-translate-y-1/2 right-0 z-0 w-full md:w-[45%]">
-      <img
-        src="/images/heroLogo.png"
-        alt="Mont Saint-Michel castle"
-        className="w-full h-auto object-contain"
-      />
-    </div>
-  </div>
+          {/* Hero Image */}
+          <div className="md:absolute top-1/2 md:-translate-y-1/2 right-0 z-0 w-full md:w-[45%]">
+            <img
+              src="/images/heroLogo.png"
+              alt="Mont Saint-Michel castle"
+              className="w-full h-auto object-contain"
+            />
+          </div>
+        </div>
 
-  {/* Feature Cards - Spaced properly */}
-  <div className="container mx-auto px-4 pt-24 pb-3 z-20 relative">
-    <h3 className="text-gray-700 mb-6">Elevate Your Travel Experience</h3>
-    <div className="flex flex-wrap gap-4 justify-between">
-    <div className="bg-gray-800 text-white p-4 rounded-lg flex items-center gap-2 w-[140px]">
+        {/* Feature Cards - Spaced properly */}
+        <div className="container mx-auto px-4 pt-24 pb-3 z-20 relative">
+          <h3 className="text-gray-700 mb-6">Elevate Your Travel Experience</h3>
+          <div className="flex flex-wrap gap-4 justify-between">
+            <div className="bg-gray-800 text-white p-4 rounded-lg flex items-center gap-2 w-[140px]">
               <img src="/images/vealth.png" alt="Vealtech Icon" className="h-5 w-5" />
               <span>Vealtech</span>
             </div>
@@ -97,10 +82,10 @@ export default function Home() {
               <img src="/images/tinylogo4.png" alt="Personal Icon" className="h-5 w-5" />
               <span>Personal</span>
             </div>
-          
-    </div>
-  </div>
-</section>
+
+          </div>
+        </div>
+      </section>
 
 
       {/* About Section */}
@@ -266,8 +251,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
-     </div>
-  );
+    </div>
+  );
 
 }
 

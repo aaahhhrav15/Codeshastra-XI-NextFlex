@@ -3,47 +3,41 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const mainColor = "#DFD0D0";
   const lightColor = "#FAF1EF";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
+  
     try {
-      const res = await fetch("http://localhost:8000/api/auth/login", {
+      const res = await fetch("http://localhost:8000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
-
+  
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed.");
-      }
-
-      // Save token to localStorage
+  
+      if (!res.ok) throw new Error(data.message || "Signup failed.");
+  
       localStorage.setItem("token", data.token);
-
-      console.log("Logged in successfully:", data);
+  
       router.push("/profile"); 
     } catch (err) {
-      console.error("Login error:", err.message);
+      console.error("Signup error:", err.message);
       alert(err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
-
+  
+  
   return (
     <div
       style={{
@@ -65,20 +59,20 @@ export default function LoginPage() {
       >
         <div className="flex gap-4 mb-8">
           <button
+            onClick={() => router.push("/login")}
             className="flex-1 py-2 rounded-lg transition-all font-medium"
             style={{
-              backgroundColor: lightColor,
-              color: "#2D2D2D",
+              backgroundColor: "transparent",
+              color: "#5A5A5A",
             }}
           >
             Login
           </button>
           <button
-            onClick={() => router.push("/signup")}
             className="flex-1 py-2 rounded-lg transition-all font-medium"
             style={{
-              backgroundColor: "transparent",
-              color: "#5A5A5A",
+              backgroundColor: lightColor,
+              color: "#2D2D2D",
             }}
           >
             Sign Up
@@ -88,12 +82,18 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
+            <input
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-              required
             />
             <input
               type="password"
@@ -101,27 +101,25 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-              required
             />
           </div>
           <button
             type="submit"
-            disabled={isLoading}
             style={{ backgroundColor: lightColor }}
             className="w-full py-2 rounded-lg font-medium hover:brightness-95 transition-all"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            Sign Up
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{" "}
+          Already have an account?{" "}
           <button
-            onClick={() => router.push("/signup")}
+            onClick={() => router.push("/login")}
             className="font-medium hover:underline"
             style={{ color: "white" }}
           >
-            Sign up
+            Login
           </button>
         </div>
       </div>
