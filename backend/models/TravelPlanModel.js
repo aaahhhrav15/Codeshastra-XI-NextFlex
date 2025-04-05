@@ -13,6 +13,10 @@ const ActivitySchema = new mongoose.Schema(
     time: String,
     description: String,
     location: String,
+    coordinates: {
+      lat: Number,
+      long: Number
+    },
     cost: CostSchema,
     duration: String,
     notes: String,

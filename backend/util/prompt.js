@@ -301,6 +301,10 @@ Return your response strictly in the following JSON format, which follows the ex
       time: String,          // Time for activity
       description: String,   // What to do
       location: String,      // Where to go
+      coordinates: {
+        lat: Number,         // Exact latitude of the location till 6 decimal places
+        long: Number         // Exact longitude of the location till 6 decimal places
+      },
       cost: {
         amount: Number,
         currency: String
@@ -337,8 +341,8 @@ Attraction:
   location: {
     address: String,         // Full address
     coordinates: {
-      latitude: Number,
-      longitude: Number
+      latitude: Number,      // Proper latitude of the location
+      longitude: Number      // Proper longitude of the location
     }
   },
   description: String,       // Short description
@@ -361,6 +365,7 @@ Attraction:
 - All cost fields must include currency ('INR').
 - Include realistic weather forecasts for the destination.
 - Structure must be clean, valid minified JSON — no additional text outside of JSON.
+- All the latitude and longitude coordinates must be of the accurate location and have 6 digits after decimal
 
 Only respond with the completed minified JSON document. Do not include explanations or extra commentary.
 `;
