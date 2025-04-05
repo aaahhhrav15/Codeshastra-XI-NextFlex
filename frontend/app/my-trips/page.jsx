@@ -10,48 +10,48 @@ import { useAuth } from "@/providers/AuthContext"
 import { useRouter } from "next/navigation"
 
 // Sample trip data
-const sampleTrips = [
-  {
-    id: 1,
-    destination: "Paris, France",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "May 15, 2025",
-    endDate: "May 22, 2025",
-    budget: "$2,500",
-    travelers: 2,
-    status: "upcoming",
-  },
-  {
-    id: 2,
-    destination: "Tokyo, Japan",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "July 10, 2025",
-    endDate: "July 24, 2025",
-    budget: "$4,800",
-    travelers: 1,
-    status: "planning",
-  },
-  {
-    id: 3,
-    destination: "Bali, Indonesia",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "September 5, 2025",
-    endDate: "September 15, 2025",
-    budget: "$3,200",
-    travelers: 2,
-    status: "planning",
-  },
-  {
-    id: 4,
-    destination: "New York City, USA",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "December 20, 2025",
-    endDate: "December 27, 2025",
-    budget: "$3,800",
-    travelers: 4,
-    status: "planning",
-  },
-]
+// const sampleTrips = [
+//   {
+//     id: 1,
+//     destination: "Paris, France",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "May 15, 2025",
+//     endDate: "May 22, 2025",
+//     budget: "$2,500",
+//     travelers: 2,
+//     status: "upcoming",
+//   },
+//   {
+//     id: 2,
+//     destination: "Tokyo, Japan",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "July 10, 2025",
+//     endDate: "July 24, 2025",
+//     budget: "$4,800",
+//     travelers: 1,
+//     status: "planning",
+//   },
+//   {
+//     id: 3,
+//     destination: "Bali, Indonesia",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "September 5, 2025",
+//     endDate: "September 15, 2025",
+//     budget: "$3,200",
+//     travelers: 2,
+//     status: "planning",
+//   },
+//   {
+//     id: 4,
+//     destination: "New York City, USA",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "December 20, 2025",
+//     endDate: "December 27, 2025",
+//     budget: "$3,800",
+//     travelers: 4,
+//     status: "planning",
+//   },
+// ]
 
 export default function MyTripsPage() {
   const [trips, setTrips] = useState([]);
@@ -61,27 +61,68 @@ export default function MyTripsPage() {
 
   useEffect(() => {
     const fetchTrips = async () => {
-      // Simulate an API call
-      const response = await fetch("http://localhost:8000/api/travelplans/get", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if(response.ok) {
-        const data = await response.json();
-        setTrips(data);
-      } else {
-        setTrips([]); // Fallback to sample data if API call fails
+      try {
+        // Fetch trips data from your API
+        const response = await fetch("http://localhost:8000/api/travelplans/get", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Fetch Unsplash images for each trip
+          const tripsWithImages = await Promise.all(
+            data.map(async (trip) => {
+              try {
+                // Fetch image from Unsplash based on destination
+                const unsplashResponse = await fetch(
+                  `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+                    trip.overview.destination
+                  )}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=1`
+                );
+                
+                if (!unsplashResponse.ok) {
+                  throw new Error("Unsplash API error");
+                }
+                
+                const unsplashData = await unsplashResponse.json();
+                
+                // Use the first result if available, otherwise fallback to placeholder
+                const imageUrl = unsplashData.results?.[0]?.urls?.regular || "/placeholder.svg";
+                
+                return {
+                  ...trip,
+                  image: imageUrl
+                };
+              } catch (error) {
+                console.error("Error fetching Unsplash image:", error);
+                return {
+                  ...trip,
+                  image: "/placeholder.svg" // Fallback image
+                };
+              }
+            })
+          );
+          
+          setTrips(tripsWithImages);
+        } else {
+          setTrips([]);
+        }
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+        setTrips([]);
       }
-      // setTrips(sampleTrips); // Use sample data for now
-    }
-    if(token) {
+    };
+  
+    if (token) {
       fetchTrips();
     } else {
       router.push("/login");
     }
-  }, [])
+  }, [token, router]);
 
   const filteredTrips = trips.length > 0 && filter === "all" ? trips : trips.filter((trip) => trip.status === filter) || [];
 
