@@ -164,7 +164,10 @@ async function getAirportCode(query) {
 
   try {
     const response = await fetch(url, options);
+    console.log("Fetching Data");
+    
     const result = await response.json();
+    console.log(result.data[0].airports)
     return result.data[0].airports[0].code;
   } catch (error) {
     return error;

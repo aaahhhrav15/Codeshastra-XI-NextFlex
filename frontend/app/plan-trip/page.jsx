@@ -6,34 +6,30 @@ import { useForm } from "react-hook-form"
 import { CalendarIcon, Plane, Car, Train, Ship, Check, MapPin } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Button as UIButton } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Material UI Components
-import OutlinedInput from "@material-ui/core/OutlinedInput"
-import Button from "@material-ui/core/Button"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemText from "@material-ui/core/ListItemText"
-import Divider from "@material-ui/core/Divider"
 
-// Nominatim base URL for OpenStreetMap API
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?"
 
-// Location Search Component
 const LocationSearch = ({ value, onChange, onSelect, placeholder }) => {
+  const router = useRouter();
     const [searchText, setSearchText] = useState(value || "")
     const [listPlace, setListPlace] = useState([])
     const [isProgrammaticUpdate, setIsProgrammaticUpdate] = useState(false)
-  
+
     useEffect(() => {
       setSearchText(value || "")
     }, [value])
-  
+
+
+
     const handleSearch = () => {
       if (searchText.trim().length < 2) return
       
@@ -43,7 +39,7 @@ const LocationSearch = ({ value, onChange, onSelect, placeholder }) => {
         addressdetails: 1,
         polygon_geojson: 0,
       }
-  
+
       const queryString = new URLSearchParams(params).toString()
       
       fetch(`${NOMINATIM_BASE_URL}${queryString}`)
@@ -53,8 +49,7 @@ const LocationSearch = ({ value, onChange, onSelect, placeholder }) => {
         })
         .catch((err) => console.log("err: ", err))
     }
-  
-    // Auto-search after typing
+
     useEffect(() => {
       if (isProgrammaticUpdate) {
         setIsProgrammaticUpdate(false)
@@ -69,12 +64,11 @@ const LocationSearch = ({ value, onChange, onSelect, placeholder }) => {
       
       return () => clearTimeout(timer)
     }, [searchText])
-  
+
     return (
       <div className="flex flex-col w-full">
         <div className="mb-2">
-          <OutlinedInput
-            className="w-full border-[#DFD0D0]"
+          <Input
             value={searchText}
             placeholder={placeholder}
             onChange={(event) => {
@@ -90,43 +84,44 @@ const LocationSearch = ({ value, onChange, onSelect, placeholder }) => {
           />
         </div>
         {listPlace.length > 0 && (
-          <div className="border border-[#DFD0D0] rounded-md mb-4 max-h-64 overflow-y-auto bg-white z-20 relative">
-            <List component="nav" aria-label="location results">
+          <Card className="mb-4 max-h-64 overflow-y-auto bg-white z-20 relative">
+            <div className="py-2">
               {listPlace.map((item) => (
                 <div key={item?.place_id}>
-                  <ListItem
-                    button
+                  <button
+                    className="w-full px-4 py-2 hover:bg-muted/50 text-left flex items-center"
                     onClick={() => {
                       setIsProgrammaticUpdate(true)
                       onSelect(item)
                       setListPlace([])
                     }}
                   >
-                    <ListItemIcon>
-                      <MapPin className="h-6 w-6 text-[#7a6868]" />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary={item?.display_name} 
-                      className="text-[#7a6868]"
-                    />
-                  </ListItem>
-                  <Divider />
+                    <MapPin className="h-6 w-6 text-[#7a6868] mr-3" />
+                    <span className="text-[#7a6868]">{item?.display_name}</span>
+                  </button>
+                  <div className="border-t border-[#DFD0D0] my-1" />
                 </div>
               ))}
-            </List>
-          </div>
+            </div>
+          </Card>
         )}
       </div>
     )
-  }
+}
 
 export default function PlanTripPage() {
   const router = useRouter()
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [startDate, setStartDate] = useState()
   const [endDate, setEndDate] = useState()
   const [sourceLocation, setSourceLocation] = useState(null)
   const [destinationLocation, setDestinationLocation] = useState(null)
+  const [apiResponse, setApiResponse] = useState(null)
+  const [selectedOption, setSelectedOption] = useState(null)
+  const [meal, setmeal] = useState("")
+  const [budget, setBudget] = useState("") 
 
   const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
     defaultValues: {
@@ -145,7 +140,6 @@ export default function PlanTripPage() {
   const transport = watch("transport")
   const transportClass = watch("transportClass")
 
-  // Get appropriate class options based on transport type
   const getTransportClassOptions = () => {
     switch(transport) {
       case 'plane':
@@ -167,24 +161,65 @@ export default function PlanTripPage() {
     }
   }
 
-  const onSubmit = (data) => {
-    // Include coordinates if locations were selected from search
-    const formData = {
-      ...data,
-      startDate,
-      endDate,
-      sourceCoords: sourceLocation ? [sourceLocation.lat, sourceLocation.lon] : null,
-      destCoords: destinationLocation ? [destinationLocation.lat, destinationLocation.lon] : null,
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
     }
-    
-    console.log(formData)
+  }, [])
+
+  const onSubmit = async (data) => {
+    setIsLoading(true)
+    setError(null)
     setIsSubmitted(true)
     
-    // Simulate a brief loading period before redirecting
-    setTimeout(() => {
-      // In a real app, you might use state management instead of URL params for complex data
-      router.push(`/itinerary?source=${encodeURIComponent(data.source)}&destination=${encodeURIComponent(data.destination)}`)
-    }, 1500)
+    const formattedStartDate = startDate ? format(startDate, "yyyy-MM-dd") : ""
+    const formattedEndDate = endDate ? format(endDate, "yyyy-MM-dd") : ""
+    
+    let travelClass = "Economy"
+    if (transport === "plane") {
+      switch(transportClass) {
+        case "economy": travelClass = "Economy"; break
+        case "premium_economy": travelClass = "PremiumEconomy"; break
+        case "business": travelClass = "Business"; break
+        case "first": travelClass = "First"; break
+      }
+    }
+
+    const apiPayload = {
+      source: data.source,
+      destination: data.destination,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      travelClass: travelClass,
+      passengerCount: data.travelers
+    }
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/travelplans/get-travel-options', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer 2267a374bb9b908e98e106ec133a9d8c59bc63f7de321da3b5a114fc649d4009`
+        },
+        body: JSON.stringify(apiPayload)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`)
+      }
+      
+      const responseData = await response.json()
+      setApiResponse(responseData)
+      
+    } catch (error) {
+      console.error('Submission error:', error)
+      setError(error.message || "Failed to save travel plan. Please try again.")
+      setIsSubmitted(false)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -195,20 +230,137 @@ export default function PlanTripPage() {
           <p className="text-[#9e8585]">Fill in the details below to start planning your perfect getaway</p>
         </div>
 
-        {isSubmitted ? (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center animate-in zoom-in duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-              <Check className="h-8 w-8 text-green-600" />
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-red-100 border border-red-200 animate-in fade-in">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
+        {isSubmitted && !error ? (
+          <div>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center animate-in zoom-in duration-300">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-green-800 mb-2">Creating Your Trip Plan!</h2>
+              <p className="text-green-700">
+                We're preparing your personalized itinerary from {source} to {destination}...
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-green-800 mb-2">Creating Your Trip Plan!</h2>
-            <p className="text-green-700">
-              We're preparing your personalized itinerary from {source} to {destination}...
-            </p>
+
+            {apiResponse ? (
+              <div className="bg-white rounded-xl shadow-md p-6 md:p-8 animate-in slide-in-from-bottom">
+                <h2 className="text-2xl font-bold text-[#7a6868] mb-6">Available Travel Options</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {apiResponse.map((option, index) => (
+                    <Card key={index} className={cn(
+                      "p-4 hover:shadow-lg transition-shadow cursor-pointer",
+                      selectedOption?.flightNumber === option.flightNumber && "ring-2 ring-[#7a6868]"
+                    )}
+                    onClick={() => setSelectedOption(option)} >
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3 border-b pb-2">
+                          <div>
+                            <h3 className="font-semibold text-[#7a6868]">{option.carrierName}</h3>
+                            <p className="text-sm text-gray-500">{option.flightNumber}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <p className="text-sm font-medium text-[#7a6868]">Departure</p>
+                            <p className="text-sm">{format(new Date(option.departureTime), 'HH:mm')}</p>
+                            <p className="text-xs text-gray-500">{option.departureAirport}</p>
+                          </div>
+                          
+                          <div className="text-center">
+                            <p className="text-sm font-medium text-[#7a6868]">Duration</p>
+                            <p className="text-sm">
+                              {Math.floor(option.duration / 60)}h {option.duration % 60}m
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-medium text-[#7a6868]">Arrival</p>
+                            <p className="text-sm">{format(new Date(option.arrivalTime), 'HH:mm')}</p>
+                            <p className="text-xs text-gray-500">{option.arrivalAirport}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                            {option.cabinClass}
+                          </span>
+                          <div className="text-right">
+                            <p className="text-xs text-gray-500">From</p>
+                            <p className="text-lg font-bold text-[#7a6868]">
+                              ₹{option.price.toLocaleString('en-IN')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+                
+                {selectedOption && (
+        <div className="mt-8 space-y-6">
+          <div>
+  <label className="block text-[#7a6868] mb-2">Meals</label>
+  <Select onValueChange={setmeal} value={meal}>
+    <SelectTrigger className="w-full">
+      <SelectValue placeholder="Select meal type" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="veg">Veg</SelectItem>
+      <SelectItem value="non-veg">Non-Veg</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+          <div>
+            <label className="block text-[#7a6868] mb-2">Budget (INR)</label>
+            <Input 
+              type="number" 
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              placeholder="Enter your total budget"
+            />
+          </div>
+
+          <Button
+            className="w-full bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]"
+            onClick={() => {
+              console.log({
+                travelOption: selectedOption,
+                meal,
+                budget,
+                formData: {
+                  source: watch("source"),
+                  destination: watch("destination"),
+                  startDate: format(startDate, "yyyy-MM-dd"),
+                  endDate: format(endDate, "yyyy-MM-dd"),
+                  transport: watch("transport"),
+                  transportClass: watch("transportClass"),
+                  travelers: watch("travelers")
+                }
+              })
+            }}
+          >
+            Finalize Trip Details
+          </Button>
+        </div>
+      )}
+    </div>
+  )  : (
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-yellow-700">Fetching travel options...</p>
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md p-6 md:p-8 animate-in slide-in-from-bottom duration-500">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Source Location with OpenStreetMap */}
               <div>
                 <label className="block text-[#7a6868] mb-2">
                   <MapPin className="inline h-4 w-4 mr-1" />
@@ -218,8 +370,9 @@ export default function PlanTripPage() {
                   value={source}
                   onChange={(value) => setValue("source", value)}
                   onSelect={(location) => {
-                    setValue("source", location.display_name)
-                    setSourceLocation(location)
+                    const shortName = location.display_name.split(',')[0].trim();
+                    setValue("source", shortName);
+                    setSourceLocation(location);
                   }}
                   placeholder="Where are you departing from?"
                 />
@@ -236,8 +389,9 @@ export default function PlanTripPage() {
                   value={destination}
                   onChange={(value) => setValue("destination", value)}
                   onSelect={(location) => {
-                    setValue("destination", location.display_name)
-                    setDestinationLocation(location)
+                    const shortName = location.display_name.split(',')[0].trim();
+                    setValue("destination", shortName);
+                    setDestinationLocation(location);
                   }}
                   placeholder="Where do you want to go?"
                 />
@@ -249,7 +403,7 @@ export default function PlanTripPage() {
                   <label className="block text-[#7a6868] mb-2">Start Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <UIButton
+                      <Button
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal border-[#DFD0D0] focus-visible:ring-[#b8a5a5]",
@@ -258,7 +412,7 @@ export default function PlanTripPage() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
-                      </UIButton>
+                      </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
@@ -272,13 +426,14 @@ export default function PlanTripPage() {
                       />
                     </PopoverContent>
                   </Popover>
+                  {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
                 </div>
 
                 <div>
                   <label className="block text-[#7a6868] mb-2">End Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <UIButton
+                      <Button
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal border-[#DFD0D0] focus-visible:ring-[#b8a5a5]",
@@ -288,7 +443,7 @@ export default function PlanTripPage() {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {endDate ? format(endDate, "PPP") : <span>Pick a date</span>}
-                      </UIButton>
+                      </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
@@ -303,6 +458,7 @@ export default function PlanTripPage() {
                       />
                     </PopoverContent>
                   </Popover>
+                  {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
                 </div>
               </div>
 
@@ -330,7 +486,7 @@ export default function PlanTripPage() {
                           value={option.value}
                           {...register("transport", { 
                             required: "Transport preference is required",
-                            onChange: () => setValue("transportClass", "") // Reset class when transport changes
+                            onChange: () => setValue("transportClass", "")
                           })}
                           className="sr-only"
                         />
@@ -343,7 +499,6 @@ export default function PlanTripPage() {
                 {errors.transport && <p className="text-red-500 text-sm mt-1">{errors.transport.message}</p>}
               </div>
 
-              {/* Transport Class Options - Only show for plane and train */}
               {(transport === 'plane' || transport === 'train') && (
                 <div>
                   <label className="block text-[#7a6868] mb-2">
@@ -367,30 +522,40 @@ export default function PlanTripPage() {
                 </div>
               )}
 
-              <div>
-                <label className="block text-[#7a6868] mb-2">Number of Travelers</label>
-                <select
-                  {...register("travelers", { required: "Number of travelers is required" })}
-                  className="w-full border border-[#DFD0D0] rounded-md p-2 focus:ring-[#b8a5a5]"
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <option key={num} value={num}>
-                      {num} {num === 1 ? "Traveler" : "Travelers"}
-                    </option>
-                  ))}
-                  <option value="10+">10+ Travelers</option>
-                </select>
-              </div>
+<div>
+  <label className="block text-[#7a6868] mb-2">Number of Travelers</label>
+  <Select
+    {...register("travelers", { required: "Number of travelers is required" })}
+    onValueChange={(value) => setValue("travelers", value)}
+  >
+    <SelectTrigger className="w-full">
+      <SelectValue placeholder="Select travelers" />
+    </SelectTrigger>
+    <SelectContent>
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+        <SelectItem key={num} value={num.toString()}>
+          {num} {num === 1 ? "Traveler" : "Travelers"}
+        </SelectItem>
+      ))}
+      <SelectItem value="10+">10+ Travelers</SelectItem>
+    </SelectContent>
+  </Select>
+  {errors.travelers && <p className="text-red-500 text-sm mt-1">{errors.travelers.message}</p>}
+</div>
 
-              <UIButton 
+              <Button 
                 type="submit" 
-                className="w-full bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]"
+                className={cn(
+                  "w-full bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]",
+                  isLoading && "opacity-70 cursor-not-allowed"
+                )}
                 disabled={
-                  (transport === 'plane' || transport === 'train') && !transportClass
+                  isLoading || 
+                  ((transport === 'plane' || transport === 'train') && !transportClass)
                 }
               >
-                Plan My Trip
-              </UIButton>
+                {isLoading ? "Processing..." : "Plan My Trip"}
+              </Button>
             </form>
           </div>
         )}
