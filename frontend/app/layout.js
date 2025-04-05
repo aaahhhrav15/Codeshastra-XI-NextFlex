@@ -69,11 +69,13 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
+
 import dynamic from "next/dynamic";
 import { Toaster } from "sonner";
 import { usePathname } from "next/navigation";
 import { LocalizationProvider } from "@sujalchoudhari/localization";
 import { Chatbot } from "@/components/ChatBot";
+import { AuthProvider } from "@/providers/AuthContext";
 
 const SideBar = dynamic(() => import("@/components/sidebar/SideBar"), { ssr: false });
 const NavBar = dynamic(() => import("@/components/NavBar"), { ssr: false });
@@ -87,6 +89,7 @@ export default function RootLayout({ children }) {
   const isDashboard = pathname?.startsWith("/dashboard");
 
   return (
+    <AuthProvider>
     <html lang="en">
       <head>
         <link
@@ -124,7 +127,9 @@ export default function RootLayout({ children }) {
               </div>
             )}
           </ThemeProvider>
+          
       </body>
     </html>
+    </AuthProvider>
   );
 }

@@ -6,6 +6,8 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Calendar, MapPin, DollarSign, Users, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/providers/AuthContext"
+import { useRouter } from "next/navigation"
 
 // Sample trip data
 const sampleTrips = [
@@ -52,18 +54,36 @@ const sampleTrips = [
 ]
 
 export default function MyTripsPage() {
-  const [trips, setTrips] = useState([])
-  const [filter, setFilter] = useState("all")
+  const [trips, setTrips] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const {token} = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTrips(sampleTrips)
-    }, 800)
-
-    return () => clearTimeout(timer)
+    const fetchTrips = async () => {
+      // Simulate an API call
+      const response = await fetch("http://localhost:8000/api/travelplans/get", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if(response.ok) {
+        const data = await response.json();
+        setTrips(data);
+      } else {
+        setTrips([]); // Fallback to sample data if API call fails
+      }
+      // setTrips(sampleTrips); // Use sample data for now
+    }
+    if(token) {
+      fetchTrips();
+    } else {
+      router.push("/login");
+    }
   }, [])
 
-  const filteredTrips = filter === "all" ? trips : trips.filter((trip) => trip.status === filter)
+  const filteredTrips = trips.length > 0 && filter === "all" ? trips : trips.filter((trip) => trip.status === filter) || [];
 
   const container = {
     hidden: { opacity: 0 },
@@ -123,10 +143,10 @@ export default function MyTripsPage() {
                 variants={item}
               >
                 <div className="relative h-48">
-                  <Image src={trip.image} alt={trip.destination} fill className="object-cover" />
+                  <Image src={trip.image} alt={trip.overview.destination} fill className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-4 text-white">
-                    <h3 className="text-xl font-bold">{trip.destination}</h3>
+                    <h3 className="text-xl font-bold">{trip.overview.destination}</h3>
                     <div className="flex items-center text-sm">
                       <MapPin className="h-4 w-4 mr-1" />
                       <span>{trip.status === "upcoming" ? "Confirmed" : "Planning"}</span>
@@ -141,7 +161,7 @@ export default function MyTripsPage() {
                       <div>
                         <p className="text-xs text-[#9e8585]">Dates</p>
                         <p className="text-sm text-[#7a6868]">
-                          {trip.startDate} - {trip.endDate}
+                          {trip.overview.startDate} - {trip.overview.endDate}
                         </p>
                       </div>
                     </div>
@@ -149,7 +169,7 @@ export default function MyTripsPage() {
                       <DollarSign className="h-4 w-4 text-[#b8a5a5] mr-2 mt-0.5" />
                       <div>
                         <p className="text-xs text-[#9e8585]">Budget</p>
-                        <p className="text-sm text-[#7a6868]">{trip.budget}</p>
+                        <p className="text-sm text-[#7a6868]">{trip.overview.totalBudget.amount}</p>
                       </div>
                     </div>
                   </div>
