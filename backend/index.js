@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
- 
+const userRoutes = require('./routes/AuthRoutes');
 
 const app = express();
 
@@ -10,12 +10,16 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-// connectDB();
+connectDB();
 
 // Sample route
 app.get('/', (req, res) => {
     res.send('Hello from MERN backend!');
 });
+
+
+// User Operation
+app.use('/api/auth', userRoutes);
 
 // Start server
 const PORT = 8000;
