@@ -1,6 +1,6 @@
-const TravelPlan = require("../models/TravelPlanModel");
-const { getPrompt2 } = require("../util/prompt.js");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import TravelPlan from "../models/TravelPlanModel.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getPrompt2 } from "../util/prompt.js";
 
 const geminiApiKey = process.env.GEMINI_API;
 const genAI = new GoogleGenerativeAI(geminiApiKey);

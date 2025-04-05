@@ -1,8 +1,8 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const User = require('../models/UserModel');
-const authenticate = require('../middleware/authMiddleware');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import User from '../models/UserModel.js';
+import authenticate from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -61,4 +61,4 @@ router.post('/logout', authenticate, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

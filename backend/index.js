@@ -1,8 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
-const userRoutes = require('./routes/AuthRoutes');
-const travelPlanRoutes = require("./routes/TravelPlanRoutes");
+import express from 'express';
+import cors from 'cors';
+import connectDB from './config/db.js';
+import userRoutes from './routes/AuthRoutes.js';
+import travelPlanRoutes from './routes/TravelPlanRoutes.js';
+
 
 const app = express();
 

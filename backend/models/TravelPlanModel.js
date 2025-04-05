@@ -1,4 +1,4 @@
-const mongoose = require(mongoose)
+import mongoose from "mongoose";
 
 const CostSchema = new mongoose.Schema(
   {
@@ -75,4 +75,5 @@ const TravelPlanSchema = new mongoose.Schema({
   owner: String,
 });
 
-module.exports = mongoose.model("TravelPlan", TravelPlanSchema);
+const TravelPlan = mongoose.model("TravelPlan", TravelPlanSchema);
+export default TravelPlan;
