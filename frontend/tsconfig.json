@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/(routes)/patientProfile/page.jsx", "app/(routes)/doctorProfile/page.jsx", "app/(routes)/DoctorOnBoarding/page.jsx", "app/(routes)/page.jsx", "app/(routes)/crimeScene/layout.jsx", "app/(routes)/crimeScene/page.jsx", "components/theme-provider.jsx", "components/map.jsx", "components/caseList.jsx", "components/case-list.jsx", "components/chat-interface.jsx", "components/sidebar.jsx", "app/(routes)/connect/page.jsx", "pages/api/groq.js"],
+  "exclude": ["node_modules"]
+}
