@@ -1,0 +1,33 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+// Initialize Google Generative AI with API key
+const geminiApiKey = process.env.GEMINI_API;
+const genAI = new GoogleGenerativeAI(geminiApiKey);
+let genAIModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+const result = await genAIModel.generateContent(
+  getPrompt2(
+    "Mumbai",
+    "Matheran",
+    "2025-05-01",
+    "2025-05-2",
+    1,
+    2,
+    30000,
+    "mid-range",
+    "economy",
+    ["relaxation"],
+    ["vegetarian"],
+    ["car"]
+  )
+);
+
+import * as fs from "node:fs";
+
+fs.writeFile("res.json", result.response.text(), (err) => {
+  if (err) {
+    console.error("Error writing the file:", err);
+  } else {
+    console.log("File written successfully!");
+  }
+});
