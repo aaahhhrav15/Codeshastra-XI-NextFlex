@@ -1,6 +1,7 @@
 import TravelPlan from "../models/TravelPlanModel.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getPrompt2 } from "../util/prompt.js";
+import mongoose from "mongoose";
 
 const geminiApiKey = process.env.GEMINI_API;
 const genAI = new GoogleGenerativeAI(geminiApiKey);
@@ -41,7 +42,7 @@ export async function store(req, res) {
       weatherForecast,
       owner: req.user._id,
     });
-
+    
     await newPlan.save();
 
     res.status(201).json({
@@ -169,3 +170,45 @@ async function getAirportCode(query) {
     return error;
   }
 }
+
+export async function getAllTravelPlans(req, res) {
+  try {
+    const userId = req.user._id;
+
+    // Fetch all travel plans for this user
+    const travelPlans = await TravelPlan.find({ owner: userId });
+
+    if (!travelPlans || travelPlans.length === 0) {
+      return res.status(404).json({ error: "No travel plans found for this user." });
+    }
+
+    // Return full plan objects
+    res.status(200).json(travelPlans);
+  } catch (error) {
+    console.error("Error fetching travel plans:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export async function getTravelPlanById(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Check if the ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid travel plan ID." });
+    }
+
+    const travelPlan = await TravelPlan.findById(id);
+
+    if (!travelPlan) {
+      return res.status(404).json({ error: "Travel plan not found." });
+    }
+
+    res.status(200).json(travelPlan);
+  } catch (error) {
+    console.error("Error fetching travel plan by ID:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
