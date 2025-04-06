@@ -101,7 +101,7 @@ export default function MyTripsPage() {
                 console.error("Error fetching Unsplash image:", error);
                 return {
                   ...trip,
-                  image: "/placeholder.svg" // Fallback image
+                  image: "/placeholder.png" // Fallback image
                 };
               }
             })
@@ -122,7 +122,7 @@ export default function MyTripsPage() {
     } else {
       router.push("/login");
     }
-  }, [token, router]);
+  }, []);
 
   const filteredTrips = trips.length > 0 && filter === "all" ? trips : trips.filter((trip) => trip.status === filter) || [];
 
@@ -213,7 +213,7 @@ export default function MyTripsPage() {
   variant="ghost"
   className="text-[#7a6868] hover:text-[#4a3e3e] hover:bg-[#f0e8e8] p-0"
 >
-  <Link href={`/my-trips/${trip._id}`}> 
+  <Link href={`/dashboard/itinerary/${trip._id}`}> 
   
     Trip Summary
     <ArrowRight className="ml-1 h-4 w-4" />

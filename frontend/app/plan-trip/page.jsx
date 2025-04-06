@@ -363,8 +363,8 @@ const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
               </p>
             </div>
 
-            {apiResponse ? (
-              <div className="bg-white rounded-xl shadow-md p-6 md:p-8 animate-in slide-in-from-bottom">
+            {apiResponse && apiResponse.length > 0 ? (
+              <div className="bg-white rounded-xl shadow-md p-6 md:p-8 mt-5 animate-in slide-in-from-bottom">
                 <h2 className="text-2xl font-bold text-[#7a6868] mb-6">Available Travel Options</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {apiResponse.map((option, index) => (
