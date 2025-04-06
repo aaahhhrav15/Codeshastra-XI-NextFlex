@@ -73,19 +73,19 @@ const SideBar = () => {
       </div>
       <div className=" min-h-[64px] flex overflow-hidden gap-x-2 items-center mt-[15px] ">
         <Image
-          src="/logo.png"
-          width={50}
-          height={50}
+          src="/logo.jpg"
+          width={40}
+          height={40}
           className={`cursor-pointer duration-500 ${
             expanded && "rotate-[360deg]"
           }`}
         />
         <h1
-          className={`text-textbold text-green-800 dark:text-green-600 playfair-display origin-left text-3xl font-bold duration-200 ${
+          className={`text-textbold text-green-800 dark:text-green-600 playfair-display origin-left text-2xl font-bold duration-200 ${
             !expanded && "scale-0"
           }`}
         >
-          Wellora
+          WayPoint
         </h1>
       </div>
       <div className=" flex-1">
