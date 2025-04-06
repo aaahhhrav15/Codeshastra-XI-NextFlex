@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Calendar, MapPin, DollarSign, Users, ArrowRight } from "lucide-react"
+import { Calendar, MapPin, DollarSign, Users, ArrowRight, IndianRupee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/providers/AuthContext"
 import { useRouter } from "next/navigation"
@@ -170,11 +170,14 @@ export default function MyTripsPage() {
 
         {/* Trips Grid */}
         {trips.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl shadow-sm animate-pulse">
-            <div className="w-16 h-16 bg-[#DFD0D0] rounded-full mb-4"></div>
-            <div className="h-6 w-48 bg-[#DFD0D0] rounded-md mb-2"></div>
-            <div className="h-4 w-64 bg-[#f0e8e8] rounded-md"></div>
-          </div>
+         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl shadow-sm">
+         <div className="w-16 h-16 bg-[#DFD0D0] rounded-full mb-4 flex items-center justify-center text-white text-xl font-bold">
+           !
+         </div>
+         <div className="text-gray-700 text-lg font-semibold mb-2">No Planned Trips</div>
+         <div className="text-gray-500 text-sm">We couldn't find any results to display.</div>
+       </div>
+       
         ) : (
           <motion.div className="grid md:grid-cols-2 gap-6" variants={container} initial="hidden" animate="show">
             {filteredTrips.map((trip) => (
@@ -207,7 +210,7 @@ export default function MyTripsPage() {
                       </div>
                     </div>
                     <div className="flex items-start">
-                      <DollarSign className="h-4 w-4 text-[#b8a5a5] mr-2 mt-0.5" />
+                      <IndianRupee className="h-4 w-4 text-[#b8a5a5] mr-2 mt-0.5" />
                       <div>
                         <p className="text-xs text-[#9e8585]">Budget</p>
                         <p className="text-sm text-[#7a6868]">{trip.overview.totalBudget.amount}</p>
@@ -248,9 +251,7 @@ export default function MyTripsPage() {
             </div>
             <h3 className="text-xl font-semibold text-[#7a6868] mb-2">No {filter} trips found</h3>
             <p className="text-[#9e8585] mb-6">Try changing your filter or plan a new trip</p>
-            <Button asChild className="bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]">
-              <Link href="/plan-trip">Plan a New Trip</Link>
-            </Button>
+            
           </div>
         )}
 
