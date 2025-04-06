@@ -1,105 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
-
+import { motion } from "framer-motion";
+import { User, Mail, BadgeInfo } from "lucide-react";
 
 export default function ProfilePage() {
-  // const [user, setUser] = useState(null);
   const router = useRouter();
   const { token, user } = useAuth();
 
-  useEffect
-  (() => {
+  useEffect(() => {
     if (!token) {
       router.push("/login");
     }
-  }, []);
+  }, [token]);
 
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     try {
-  //       const res = await fetch("http://localhost:8000/api/auth/profile", {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (!res.ok) throw new Error("Unauthorized");
-
-  //       const data = await res.json();
-  //       setUser(data.user);
-  //     } catch (err) {
-  //       console.error("Failed to fetch profile:", err.message);
-  //       localStorage.removeItem("token");
-  //       router.push("/login");
-  //     }
-  //   };
-
-  //   if (!token) {
-  //     router.push("/login");
-  //   } else {
-  //     fetchUser();
-  //   }
-  // }, [token, router]);
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     const token = localStorage.getItem("token");
-
-  //     if (!token) {
-  //       router.push("/login");
-  //       return;
-  //     }
-
-  //     try {
-  //       const res = await fetch("http://localhost:8000/api/auth/profile", {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (!res.ok) throw new Error("Unauthorized");
-
-  //       const data = await res.json();
-  //       setUser(data.user);
-  //       reload();
-
-  //       // Save to localStorage
-  //       localStorage.setItem("username", data.user.username);
-  //       localStorage.setItem("email", data.user.email);
-
-  //       // ✅ Call travel plan fetch AFTER successful login
-  //       reload();
-  //     } catch (err) {
-  //       console.error("Failed to fetch profile:", err.message);
-  //       localStorage.removeItem("token");
-  //       router.push("/login");
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, [reload, router]);
-
-  if (!user) return <div className="p-8">Loading profile...</div>;
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#FAF1EF]">
+        <div className="text-center text-gray-600 text-lg">Loading profile...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Hello, {user.username}</h1>
-      <p className="mt-2 text-gray-700">Email: {user.email}</p>
-      <p className="mt-1 text-gray-500">User ID: {user._id}</p>
-
-      {/* Optional debug: */}
-      {/* {travelPlan && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Travel Plan Loaded ✅</h2>
-          <p>Source: {travelPlan.overview?.source}</p>
-          <p>Destination: {travelPlan.overview?.destination}</p>
+    <div className="min-h-screen bg-[#FAF1EF] p-6 flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-[#DFD0D0] max-w-md w-full p-8 rounded-2xl shadow-xl"
+      >
+        <h1 className="text-3xl font-bold text-[#4B3F3F] mb-6 text-center">Your Profile</h1>
+        <div className="space-y-4">
+          <InfoRow icon={<User className="text-[#6B4C4C]" />} label="Username" value={user.username} />
+          <InfoRow icon={<Mail className="text-[#6B4C4C]" />} label="Email" value={user.email} />
+          <InfoRow icon={<BadgeInfo className="text-[#6B4C4C]" />} label="User ID" value={user._id} />
         </div>
-      )} */}
+      </motion.div>
+    </div>
+  );
+}
+
+function InfoRow({ icon, label, value }) {
+  return (
+    <div className="flex items-center space-x-4 bg-[#FAF1EF] px-4 py-3 rounded-lg border border-[#E6CCCC]">
+      <div>{icon}</div>
+      <div>
+        <p className="text-sm text-[#7B5E5E]">{label}</p>
+        <p className="text-base font-semibold text-[#3E2F2F]">{value}</p>
+      </div>
     </div>
   );
 }
