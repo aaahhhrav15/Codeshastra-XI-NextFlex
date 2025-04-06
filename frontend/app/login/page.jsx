@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const {setToken} = useAuth();
 
   const mainColor = "#DFD0D0";
   const lightColor = "#FAF1EF";
@@ -35,6 +37,7 @@ export default function LoginPage() {
       localStorage.setItem("token", data.token);
 
       console.log("Logged in successfully:", data);
+      setToken(data.token); // Set token in AuthContext
       router.push("/profile"); 
     } catch (err) {
       console.error("Login error:", err.message);
@@ -92,7 +95,7 @@ export default function LoginPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-4 py-2 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
               required
             />
             <input
@@ -100,7 +103,7 @@ export default function LoginPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-4 py-2 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
               required
             />
           </div>
@@ -108,7 +111,7 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             style={{ backgroundColor: lightColor }}
-            className="w-full py-2 rounded-lg font-medium hover:brightness-95 transition-all"
+            className="w-full py-2 rounded-lg font-medium text-black hover:brightness-95 transition-all"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>

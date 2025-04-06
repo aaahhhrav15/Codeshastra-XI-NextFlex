@@ -6,64 +6,125 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Calendar, MapPin, DollarSign, Users, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/providers/AuthContext"
+import { useRouter } from "next/navigation"
 
 // Sample trip data
-const sampleTrips = [
-  {
-    id: 1,
-    destination: "Paris, France",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "May 15, 2025",
-    endDate: "May 22, 2025",
-    budget: "$2,500",
-    travelers: 2,
-    status: "upcoming",
-  },
-  {
-    id: 2,
-    destination: "Tokyo, Japan",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "July 10, 2025",
-    endDate: "July 24, 2025",
-    budget: "$4,800",
-    travelers: 1,
-    status: "planning",
-  },
-  {
-    id: 3,
-    destination: "Bali, Indonesia",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "September 5, 2025",
-    endDate: "September 15, 2025",
-    budget: "$3,200",
-    travelers: 2,
-    status: "planning",
-  },
-  {
-    id: 4,
-    destination: "New York City, USA",
-    image: "/placeholder.svg?height=300&width=500",
-    startDate: "December 20, 2025",
-    endDate: "December 27, 2025",
-    budget: "$3,800",
-    travelers: 4,
-    status: "planning",
-  },
-]
+// const sampleTrips = [
+//   {
+//     id: 1,
+//     destination: "Paris, France",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "May 15, 2025",
+//     endDate: "May 22, 2025",
+//     budget: "$2,500",
+//     travelers: 2,
+//     status: "upcoming",
+//   },
+//   {
+//     id: 2,
+//     destination: "Tokyo, Japan",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "July 10, 2025",
+//     endDate: "July 24, 2025",
+//     budget: "$4,800",
+//     travelers: 1,
+//     status: "planning",
+//   },
+//   {
+//     id: 3,
+//     destination: "Bali, Indonesia",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "September 5, 2025",
+//     endDate: "September 15, 2025",
+//     budget: "$3,200",
+//     travelers: 2,
+//     status: "planning",
+//   },
+//   {
+//     id: 4,
+//     destination: "New York City, USA",
+//     image: "/placeholder.svg?height=300&width=500",
+//     startDate: "December 20, 2025",
+//     endDate: "December 27, 2025",
+//     budget: "$3,800",
+//     travelers: 4,
+//     status: "planning",
+//   },
+// ]
 
 export default function MyTripsPage() {
-  const [trips, setTrips] = useState([])
-  const [filter, setFilter] = useState("all")
+  const [trips, setTrips] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const {token} = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTrips(sampleTrips)
-    }, 800)
+    const fetchTrips = async () => {
+      try {
+        // Fetch trips data from your API
+        const response = await fetch("http://localhost:8000/api/travelplans/get", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Fetch Unsplash images for each trip
+          const tripsWithImages = await Promise.all(
+            data.map(async (trip) => {
+              try {
+                // Fetch image from Unsplash based on destination
+                const unsplashResponse = await fetch(
+                  `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+                    trip.overview.destination
+                  )}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=1`
+                );
+                
+                if (!unsplashResponse.ok) {
+                  throw new Error("Unsplash API error");
+                }
+                
+                const unsplashData = await unsplashResponse.json();
+                
+                // Use the first result if available, otherwise fallback to placeholder
+                const imageUrl = unsplashData.results?.[0]?.urls?.regular || "/placeholder.svg";
+                
+                return {
+                  ...trip,
+                  image: imageUrl
+                };
+              } catch (error) {
+                console.error("Error fetching Unsplash image:", error);
+                return {
+                  ...trip,
+                  image: "/placeholder.svg" // Fallback image
+                };
+              }
+            })
+          );
+          
+          setTrips(tripsWithImages);
+        } else {
+          setTrips([]);
+        }
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+        setTrips([]);
+      }
+    };
+  
+    if (token) {
+      fetchTrips();
+    } else {
+      router.push("/login");
+    }
+  }, [token, router]);
 
-    return () => clearTimeout(timer)
-  }, [])
-
-  const filteredTrips = filter === "all" ? trips : trips.filter((trip) => trip.status === filter)
+  const filteredTrips = trips.length > 0 && filter === "all" ? trips : trips.filter((trip) => trip.status === filter) || [];
 
   const container = {
     hidden: { opacity: 0 },
@@ -123,10 +184,10 @@ export default function MyTripsPage() {
                 variants={item}
               >
                 <div className="relative h-48">
-                  <Image src={trip.image} alt={trip.destination} fill className="object-cover" />
+                  <Image src={trip.image} alt={trip.overview.destination} fill className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-4 text-white">
-                    <h3 className="text-xl font-bold">{trip.destination}</h3>
+                    <h3 className="text-xl font-bold">{trip.overview.destination}</h3>
                     <div className="flex items-center text-sm">
                       <MapPin className="h-4 w-4 mr-1" />
                       <span>{trip.status === "upcoming" ? "Confirmed" : "Planning"}</span>
@@ -141,7 +202,7 @@ export default function MyTripsPage() {
                       <div>
                         <p className="text-xs text-[#9e8585]">Dates</p>
                         <p className="text-sm text-[#7a6868]">
-                          {trip.startDate} - {trip.endDate}
+                          {trip.overview.startDate} - {trip.overview.endDate}
                         </p>
                       </div>
                     </div>
@@ -149,7 +210,7 @@ export default function MyTripsPage() {
                       <DollarSign className="h-4 w-4 text-[#b8a5a5] mr-2 mt-0.5" />
                       <div>
                         <p className="text-xs text-[#9e8585]">Budget</p>
-                        <p className="text-sm text-[#7a6868]">{trip.budget}</p>
+                        <p className="text-sm text-[#7a6868]">{trip.overview.totalBudget.amount}</p>
                       </div>
                     </div>
                   </div>
