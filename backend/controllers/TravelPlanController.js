@@ -8,23 +8,22 @@ let genAIModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function store(req, res) {
   let prompt = getPrompt2(
-    req.body.source,
-    req.body.destination,
-    req.body.departureDate,
-    req.body.returnDate,
-    req.body.travelers,
-    req.body.duration,
-    req.body.budget,
-    req.body.preferences.accomodationType,
-    req.body.preferences.travelClass,
-    req.body.preferences.activities,
-    req.body.preferences.mealPreferences,
-    req.body.preferences.transportModes
+    req.body.formData.source,
+    req.body.formData.destination,
+    req.body.formData.startDate,
+    req.body.formData.endDate,
+    req.body.formData.travelers,
+    req.body.formData.duration,
+    req.body.budgetRange.min,
+    req.body.budgetRange.max,
+    req.body.meal,
+    req.body.travelOption.arrivalTime
   );
-  const result = await genAIModel.generateContent(prompt);
-  const geminiResponse = JSON.parse(result.response.text().slice(8, -3));
 
   try {
+    const result = await genAIModel.generateContent(prompt);
+    const geminiResponse = JSON.parse(result.response.text().slice(8, -3));
+
     const {
       overview,
       itinerary,
@@ -33,6 +32,28 @@ export async function store(req, res) {
       weatherForecast,
     } = geminiResponse;
 
+    // Store the response schema (user input)
+    const responseSchema = {
+      source: req.body.formData.source,
+      destination: req.body.formData.destination,
+      startDate: req.body.formData.startDate,
+      endDate: req.body.formData.endDate,
+      duration: req.body.formData.duration,
+      totalBudget: {
+        amount: budgetBreakdown.total,
+        currency: "INR", // Adjust based on your data
+      },
+      travelers: req.body.formData.travelers,
+      budgetRange: {
+        min: req.body.budgetRange.min,
+        max: req.body.budgetRange.max,
+      },
+      mealPreferences: req.body.meal,
+      travelOption: {
+        arrivalTime: req.body.travelOption.arrivalTime,
+      },
+    };
+
     const newPlan = new TravelPlan({
       overview,
       itinerary,
@@ -40,6 +61,7 @@ export async function store(req, res) {
       travelTips,
       weatherForecast,
       owner: req.user._id,
+      ResponseSchema: responseSchema,
     });
 
     await newPlan.save();
@@ -98,6 +120,54 @@ export async function getTravelOptions(req, res) {
   console.log(data);
 
   res.status(200).json(data);
+}
+
+export async function getHotels(req, res) {
+  const location = req.body.location;
+  const date = req.body.date;
+  const nextDate = getNextDate(date);
+  const code = await getLocationCode(location);
+  const hotelsData = await getHotelsData(code, date, nextDate);
+}
+
+async function getHotelsData(id, inDate, outDate) {
+    const url =
+    `https://agoda-com.p.rapidapi.com/hotels/search-overnight?id=${id}&checkinDate=${inDate}&checkoutDate=${outDate}&limit=5&currency=INR&starRating=3%2C4%2C5&guestReview=7`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "1c0b23dc25msh78041305e95e13ep192037jsnda2daecfedfd",
+      "x-rapidapi-host": "agoda-com.p.rapidapi.com",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getLocationCode(location) {
+  const url =
+    `https://agoda-com.p.rapidapi.com/hotels/auto-complete?query=${location}`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "1c0b23dc25msh78041305e95e13ep192037jsnda2daecfedfd",
+      "x-rapidapi-host": "agoda-com.p.rapidapi.com",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.json();
+    return result.data[0].id;
+  } catch (error) {
+    return error;
+  }
 }
 
 async function getFlights(
@@ -168,4 +238,13 @@ async function getAirportCode(query) {
   } catch (error) {
     return error;
   }
+}
+
+function getNextDate(dateStr) {
+  const date = new Date(dateStr);
+  date.setDate(date.getDate() + 1);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
