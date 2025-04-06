@@ -1,17 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Clock, DollarSign, ChevronDown, ChevronUp } from "lucide-react"
 
-export default function ActivityCard({ activity }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
+export default function ActivityCard({ activity, isExpanded, onToggle }) {
   const formatTime = (timeString) => {
     const [hours, minutes] = timeString.split(":")
-    return new Date(0, 0, 0, parseInt(hours), parseInt(minutes)).toLocaleTimeString([], {
+    return new Date(0, 0, 0, hours, minutes).toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -24,8 +21,8 @@ export default function ActivityCard({ activity }) {
         <motion.div layout className="border-l-4 border-primary">
           <CardContent className="p-0">
             <div
-              className="p-4 cursor-pointer flex justify-between items-center"
-              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition-colors"
+              onClick={onToggle}
             >
               <div className="flex items-center">
                 <div className="bg-primary/10 text-primary font-medium rounded-full h-10 w-10 flex items-center justify-center mr-4">
@@ -45,7 +42,11 @@ export default function ActivityCard({ activity }) {
                     {activity.cost.amount} {activity.cost.currency}
                   </Badge>
                 )}
-                {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                {isExpanded ? (
+                  <ChevronUp className="h-5 w-5 text-primary" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-primary" />
+                )}
               </div>
             </div>
 

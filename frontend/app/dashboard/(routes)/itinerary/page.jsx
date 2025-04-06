@@ -7,12 +7,17 @@ import { Calendar, MapPin } from "lucide-react"
 import TravelOverview from "@/app/dashboard/(routes)/itinerary/components/travel-overview"
 import ActivityCard from "@/app/dashboard/(routes)/itinerary/components/activity-card"
 import BudgetChart from "@/app/dashboard/(routes)/itinerary/components/budget-chart"
-import WeatherCard from "@/app/dashboard/(routes)/itinerary/components//weather-card"
+import WeatherCard from "@/app/dashboard/(routes)/itinerary/components/weather-card"
 import TravelTips from "@/app/dashboard/(routes)/itinerary/components/travel-tips"
 import { travelData } from "@/app/dashboard/(routes)/itinerary/data/travel-data"
 
 export default function TravelItinerary() {
   const [selectedDay, setSelectedDay] = useState("1")
+  const [expandedCardId, setExpandedCardId] = useState(null)
+
+  const handleCardToggle = (cardId) => {
+    setExpandedCardId(prevId => prevId === cardId ? null : cardId)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-blue-100 dark:from-slate-950 dark:to-slate-900">
@@ -46,7 +51,10 @@ export default function TravelItinerary() {
                 {travelData.itinerary.map((day) => (
                   <button
                     key={day.day}
-                    onClick={() => setSelectedDay(day.day.toString())}
+                    onClick={() => {
+                      setSelectedDay(day.day.toString())
+                      setExpandedCardId(null) 
+                    }}
                     className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
                       selectedDay === day.day.toString()
                         ? "bg-primary text-primary-foreground"
@@ -85,19 +93,19 @@ export default function TravelItinerary() {
                         </div>
                       </Card>
 
-                      <AnimatePresence>
-                        {day.activities.map((activity, index) => (
-                          <motion.div
-                            key={`${day.day}-${index}`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3, delay: index * 0.1 }}
-                          >
-                            <ActivityCard activity={activity} />
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
+                      <div className="space-y-4">
+                        {day.activities.map((activity, index) => {
+                          const cardId = `${day.day}-${index}`
+                          return (
+                            <ActivityCard
+                              key={cardId}
+                              activity={activity}
+                              isExpanded={expandedCardId === cardId}
+                              onToggle={() => handleCardToggle(cardId)}
+                            />
+                          )
+                        })}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -112,13 +120,11 @@ export default function TravelItinerary() {
             className="space-y-8"
           >
             <BudgetChart budgetData={travelData.budgetBreakdown} />
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
               {travelData.weatherForecast.map((forecast, index) => (
                 <WeatherCard key={index} forecast={forecast} />
               ))}
             </div>
-
             <TravelTips tips={travelData.travelTips} />
           </motion.div>
         </div>
