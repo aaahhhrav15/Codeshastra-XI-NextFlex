@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
-import { set } from "date-fns";
 
 export function ThemeToggle() {
   const localStorage = window.localStorage;
@@ -42,10 +41,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     document.documentElement.style.setProperty("--theme", themeColor);
-    document.documentElement.style.setProperty(
-      "--theme-light",
-      themeLightColor
-    );
+    document.documentElement.style.setProperty("--theme-light", themeLightColor);
     document.documentElement.style.setProperty("--primary", themehsl);
     document.documentElement.style.setProperty("--ring", themehsl);
   }, [themeColor, themeLightColor, themehsl]);
@@ -56,10 +52,7 @@ export function ThemeToggle() {
       document.documentElement.style.setProperty("--theme-light", themeColor);
     } else {
       document.documentElement.style.setProperty("--theme", themeColor);
-      document.documentElement.style.setProperty(
-        "--theme-light",
-        themeLightColor
-      );
+      document.documentElement.style.setProperty("--theme-light", themeLightColor);
     }
   }, [theme, themeColor, themeLightColor, themehsl]);
 
@@ -115,12 +108,12 @@ export function ThemeToggle() {
           }
         ></div>
         <div
-          className="rounded-full bg-colorFive w-5 h-5"
+          className="rounded-full bg-[#dfd0d0] w-5 h-5"
           onClick={() =>
             changeColor(
-              "var(--color-five)",
-              "var(--color-five-light)",
-              "var(--color-five-hsl)"
+              "#dfd0d0",
+              "#f0e8e8", // Lighter version of dfd0d0
+              "0, 20%, 85%" // Approximate HSL for dfd0d0
             )
           }
         ></div>
