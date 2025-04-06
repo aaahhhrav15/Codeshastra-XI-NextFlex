@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { differenceInDays } from 'date-fns';
+import { useAuth } from "@/providers/AuthContext"
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?"
 
@@ -122,6 +123,14 @@ export default function PlanTripPage() {
   const [selectedOption, setSelectedOption] = useState(null)
   const [meal, setmeal] = useState("")
   const [budget, setBudget] = useState("") 
+  const {token} = useAuth();
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+  }, [])
 
 
 
@@ -249,10 +258,10 @@ const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
     switch(transport) {
       case 'plane':
         return [
-          { value: 'economy', label: 'Economy' },
-          { value: 'premium_economy', label: 'Premium Economy' },
-          { value: 'business', label: 'Business' },
-          { value: 'first', label: 'First' }
+          { value: 'Economy', label: 'Economy' },
+          { value: 'PremiumEconomy', label: 'Premium Economy' },
+          { value: 'Business', label: 'Business' },
+          { value: 'First', label: 'First' }
         ]
       case 'train':
         return [
@@ -306,7 +315,7 @@ const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 2267a374bb9b908e98e106ec133a9d8c59bc63f7de321da3b5a114fc649d4009`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(apiPayload)
       })
@@ -316,6 +325,7 @@ const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
       }
       
       const responseData = await response.json()
+      console.log(responseData);
       setApiResponse(responseData)
       
     } catch (error) {
@@ -504,7 +514,7 @@ const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer 2267a374bb9b908e98e106ec133a9d8c59bc63f7de321da3b5a114fc649d4009`
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(dataToSend)
       });

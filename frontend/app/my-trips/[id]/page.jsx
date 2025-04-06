@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from "@/providers/AuthContext";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,13 +9,14 @@ export default function TripSummary() {
   const params = useParams();
   const tripId = params?.tripId;
 
-  const [token, setToken] = useState(null);
+  // const [token, setToken] = useState(null);
   const [trips, setTrips] = useState([]);
+  const {token} = useAuth();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
+    // const storedToken = localStorage.getItem("token");
+    if (token) {
+      // setToken(storedToken);
     } else {
       router.push("/login");
     }
