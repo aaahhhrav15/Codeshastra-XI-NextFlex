@@ -269,6 +269,125 @@ export function Chatbot() {
   }
   
 
+  
+
+
+
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+import {
+  Menu,
+  X,
+  ShoppingCart,
+  ChevronRight,
+  Facebook,
+  Twitter,
+  Instagram,
+  MessageCircle,
+  Send,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+export function Chatbot() {
+  const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      text: "Hello! I'm your travel assistant. Where would you like to explore today?",
+      sender: "AI",
+      timestamp: new Date(),
+    },
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+
+  const Menus = [
+    { name: "Destinations", href: "/destinations" },
+    { name: "Bookings", href: "/bookings" },
+    { name: "Itinerary", href: "/itinerary" },
+    { name: "Map", href: "/map" },
+    { name: "Reviews", href: "/reviews" },
+    { name: "Settings", href: "/settings" },
+  ];
+
+  async function gemResp(question) {
+    const allowedKeywords = [
+      "travel", "destination", "flight", "hotel", "itinerary", "budget",
+      "visa", "attraction", "culture", "transportation", "weather",
+      "packing", "safety", "currency", "language", "season", "booking",
+      "review", "activity", "adventure", "beach", "mountain", "city",
+      "family-friendly", "solo travel", "group tour", "eco-tourism"
+    ];
+
+    const isRelated = allowedKeywords.some(keyword =>
+      question.toLowerCase().includes(keyword)
+    );
+
+    if (!isRelated) {
+      return "I specialize in travel assistance. Ask me about destinations, bookings, itineraries, or travel tips!";
+    }
+
+    const travelAssistantPrompt = `
+    You are an expert travel assistant. Provide:
+    1. Destination recommendations based on interests and budget
+    2. Cultural etiquette tips
+    3. Weather-appropriate packing lists
+    4. Transportation options
+    5. Visa requirements
+    6. Safety advisories
+    7. Local cuisine suggestions
+    8. Sustainable travel practices
+    9. Itinerary planning
+    10. Booking assistance
+    Keep responses concise (<75 words). Use this template when appropriate:
+
+    🌍 Destination: [Name]
+    ✈️ Best Time to Visit: [Month(s)]
+    💰 Avg Daily Cost: [Amount]
+    🏆 Top Attractions: 
+    - [Attraction 1]
+    - [Attraction 2]
+    - [Attraction 3]
+    
+    🧳 Packing Essentials: 
+    - [Item 1]
+    - [Item 2]
+    
+    🚨 Safety Note: [Important tip]
+    
+    Question: ${question}
+    `;
+
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`;
+
+    const requestBody = {
+      contents: [{ parts: [{ text: travelAssistantPrompt }] },
+    };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      const rawAnswer = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      let formattedAnswer = rawAnswer || "I'm currently unable to help with travel planning. Please try again later.";
+      formattedAnswer = formattedAnswer.replace(/\r\n/g, "\n");
+      formattedAnswer = formattedAnswer.replace(/\n(?!\n)/g, "\n\n");
+      
+      return formattedAnswer;
+    } catch (error) {
+      console.error("Error:", error);
+      return "I'm having trouble accessing travel information. Please try again.";
+    }
+  }
+
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom whenever messages update
@@ -373,4 +492,5 @@ export function Chatbot() {
       )}
     </>
   );
+}
 }
