@@ -149,24 +149,7 @@ export default function MyTripsPage() {
           </p>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex justify-center mb-8 animate-in slide-in-from-top duration-500">
-          <div className="inline-flex bg-white p-1 rounded-full shadow-sm">
-            {["all", "upcoming", "planning"].map((value) => (
-              <button
-                key={value}
-                onClick={() => setFilter(value)}
-                className={`px-4 py-2 rounded-full text-sm transition-all duration-200 ${
-                  filter === value
-                    ? "bg-[#DFD0D0] text-[#7a6868] font-medium"
-                    : "text-[#9e8585] hover:text-[#7a6868]"
-                }`}
-              >
-                {value === "all" ? "All Trips" : value.charAt(0).toUpperCase() + value.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
+        
 
         {/* Trips Grid */}
         {trips.length === 0 ? (
