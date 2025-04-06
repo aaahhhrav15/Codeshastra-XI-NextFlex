@@ -59,7 +59,7 @@ const WeatherForecastSchema = new mongoose.Schema(
 );
 
 const OverviewSchema = new mongoose.Schema(
-  {
+  { 
     source: String,
     destination: String,
     duration: Number,
@@ -70,6 +70,31 @@ const OverviewSchema = new mongoose.Schema(
   { _id: false }
 );
 
+ const ResponseSchema = new mongoose.Schema(
+   {
+     source: String,
+     destination: String,
+     duration: Number,
+     totalBudget: CostSchema,
+     startDate: String,
+     endDate: String,
+
+     // New fields to store additional user input
+     travelers: Number,
+     budgetRange: {
+       min: Number,
+       max: Number,
+     },
+     mealPreferences: [String],
+     travelOption: {
+       arrivalTime: String,
+       // Add other travel option details if needed
+     },
+   },
+   { _id: false }
+ );
+
+
 const TravelPlanSchema = new mongoose.Schema({
   overview: OverviewSchema,
   itinerary: [ItineraryDaySchema],
@@ -77,6 +102,7 @@ const TravelPlanSchema = new mongoose.Schema({
   travelTips: [String],
   weatherForecast: [WeatherForecastSchema],
   owner: String,
+  ResponseSchema: ResponseSchema,
 });
 
 const TravelPlan = mongoose.model("TravelPlan", TravelPlanSchema);

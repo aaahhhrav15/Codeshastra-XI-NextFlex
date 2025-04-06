@@ -246,12 +246,10 @@ export function getPrompt2(
   returnDate,
   travelers,
   duration,
-  budget,
-  accommodationType,
-  travelClass,
-  activities,
+  budgetMin,
+  budgetMax,
   mealPreferences,
-  transportModes
+  arrivalTime
 ) {
   return `
 You are a travel planning assistant. Based on the user's input, generate a complete travel itinerary that includes:
@@ -270,13 +268,9 @@ Return your response strictly in the following JSON format, which follows the ex
   "returnDate": "${returnDate}", // YYYY-MM-DD
   "travelers": ${travelers},
   "duration": ${duration},
-  "budget": ${budget},
+  "budget": {"min": ${budgetMin}, "max": ${budgetMax}},
   "preferences": {
-    "accommodationType": "${accommodationType}",
-    "travelClass": "${travelClass}",
-    "activities": ${JSON.stringify(activities)},
     "mealPreferences": ${JSON.stringify(mealPreferences)},
-    "transportModes": ${JSON.stringify(transportModes)}
   }
 }
 
@@ -367,6 +361,7 @@ Attraction:
 - Structure must be clean, valid minified JSON — no additional text outside of JSON.
 - All the latitude and longitude coordinates must be of the accurate location and have 6 digits after decimal
 - The itinerary should not contain any activity regarding the inbound and outbound
+- The itinerary of the first day must start after ${arrivalTime} time, as the user lands to the destination at that time
 
 Only respond with the completed minified JSON document. Do not include explanations or extra commentary.
 `;
