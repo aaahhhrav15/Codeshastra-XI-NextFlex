@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { CalendarIcon, Plane, Car, Train, Ship, Check, MapPin } from "lucide-react"
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import { differenceInDays } from 'date-fns';
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?"
 
@@ -122,6 +122,111 @@ export default function PlanTripPage() {
   const [selectedOption, setSelectedOption] = useState(null)
   const [meal, setmeal] = useState("")
   const [budget, setBudget] = useState("") 
+
+
+
+const [minBudget, setMinBudget] = useState(2772);
+  const [maxBudget, setMaxBudget] = useState(8018);
+  const [budgetError, setBudgetError] = useState('');
+  const [dragging, setDragging] = useState(null); // 'min', 'max', or null
+  const sliderRef = useRef(null);
+
+  const duration = differenceInDays(endDate, startDate);
+
+const handleMinInputChange = (e) => {
+  const value = Number(e.target.value);
+  if (value >= 1000 && value <= maxBudget) {
+    setMinBudget(value);
+    setBudgetError('');
+  } else {
+    setBudgetError('Minimum budget must be between ₹1,000 and the maximum budget');
+  }
+};
+
+// Update max budget from input
+const handleMaxInputChange = (e) => {
+  const value = Number(e.target.value);
+  if (value >= minBudget && value <= 100000) {
+    setMaxBudget(value);
+    setBudgetError('');
+  } else {
+    setBudgetError('Maximum budget must be between the minimum budget and ₹1,00,000');
+  }
+};
+
+// Handle mouse/touch interactions on the slider track
+const handleSliderClick = (e) => {
+  if (sliderRef.current) {
+    const rect = sliderRef.current.getBoundingClientRect();
+    const clickPosition = e.clientX - rect.left;
+    const sliderWidth = rect.width;
+    const clickPercentage = clickPosition / sliderWidth;
+    const clickValue = Math.round(1000 + clickPercentage * (100000 - 1000));
+    
+    // Determine whether to move min or max handle based on which is closer
+    const distanceToMin = Math.abs(clickValue - minBudget);
+    const distanceToMax = Math.abs(clickValue - maxBudget);
+    
+    if (distanceToMin <= distanceToMax) {
+      if (clickValue <= maxBudget) {
+        setMinBudget(clickValue);
+      }
+    } else {
+      if (clickValue >= minBudget) {
+        setMaxBudget(clickValue);
+      }
+    }
+  }
+};
+
+// Handle mouse/touch interactions for handles
+const handleMouseDown = (handle) => {
+  setDragging(handle);
+};
+
+useEffect(() => {
+  const handleMouseMove = (e) => {
+    if (dragging && sliderRef.current) {
+      const rect = sliderRef.current.getBoundingClientRect();
+      const sliderWidth = rect.width;
+      let movePosition = e.clientX - rect.left;
+      
+      // Constrain to slider bounds
+      movePosition = Math.max(0, Math.min(movePosition, sliderWidth));
+      
+      const movePercentage = movePosition / sliderWidth;
+      const moveValue = Math.round(1000 + movePercentage * (100000 - 1000));
+      
+      if (dragging === 'min' && moveValue <= maxBudget) {
+        setMinBudget(moveValue);
+      } else if (dragging === 'max' && moveValue >= minBudget) {
+        setMaxBudget(moveValue);
+      }
+    }
+  };
+  
+  const handleMouseUp = () => {
+    setDragging(null);
+  };
+  
+  if (dragging) {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleMouseMove);
+    document.addEventListener('touchend', handleMouseUp);
+  }
+  
+  return () => {
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('touchmove', handleMouseMove);
+    document.removeEventListener('touchend', handleMouseUp);
+  };
+}, [dragging, minBudget, maxBudget]);
+
+// Calculate percentages for styling
+const minPercentage = ((minBudget - 1000) / (100000 - 1000)) * 100;
+const maxPercentage = ((maxBudget - 1000) / (100000 - 1000)) * 100;
 
   const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
     defaultValues: {
@@ -317,38 +422,108 @@ export default function PlanTripPage() {
     </SelectContent>
   </Select>
 </div>
-
-          <div>
-            <label className="block text-[#7a6868] mb-2">Budget (INR)</label>
-            <Input 
-              type="number" 
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder="Enter your total budget"
-            />
-          </div>
-
-          <Button
-            className="w-full bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]"
-            onClick={() => {
-              console.log({
-                travelOption: selectedOption,
-                meal,
-                budget,
-                formData: {
-                  source: watch("source"),
-                  destination: watch("destination"),
-                  startDate: format(startDate, "yyyy-MM-dd"),
-                  endDate: format(endDate, "yyyy-MM-dd"),
-                  transport: watch("transport"),
-                  transportClass: watch("transportClass"),
-                  travelers: watch("travelers")
-                }
-              })
+<div>
+      <label className="block text-[#7a6868] mb-2">Budget Range (INR)</label>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-gray-600">Min</span>
+        <Input
+          type="number"
+          value={minBudget}
+          onChange={handleMinInputChange}
+          className="w-32"
+        />
+        <span className="px-2">-</span>
+        <span className="text-gray-600">Max</span>
+        <Input
+          type="number"
+          value={maxBudget}
+          onChange={handleMaxInputChange}
+          className="w-32"
+        />
+      </div>
+      
+      <div className="px-1 py-6">
+        <div 
+          ref={sliderRef}
+          className="relative h-1 bg-gray-200 rounded-full cursor-pointer"
+          onClick={handleSliderClick}
+        >
+          {/* Colored range track */}
+          <div 
+            className="absolute h-1 bg-blue-500 rounded-full"
+            style={{
+              left: `${minPercentage}%`,
+              right: `${100 - maxPercentage}%`
             }}
-          >
-            Finalize Trip Details
-          </Button>
+          />
+          
+          {/* Min handle */}
+          <div 
+            className={`absolute top-0 w-4 h-4 bg-blue-500 border-2 border-white rounded-full shadow transform -translate-y-1.5 -translate-x-2 cursor-grab ${dragging === 'min' ? 'cursor-grabbing' : ''}`}
+            style={{ left: `${minPercentage}%` }}
+            onMouseDown={() => handleMouseDown('min')}
+            onTouchStart={() => handleMouseDown('min')}
+          />
+          
+          {/* Max handle */}
+          <div 
+            className={`absolute top-0 w-4 h-4 bg-blue-500 border-2 border-white rounded-full shadow transform -translate-y-1.5 -translate-x-2 cursor-grab ${dragging === 'max' ? 'cursor-grabbing' : ''}`}
+            style={{ left: `${maxPercentage}%` }}
+            onMouseDown={() => handleMouseDown('max')}
+            onTouchStart={() => handleMouseDown('max')}
+          />
+        </div>
+      </div>
+      
+      {budgetError && (
+        <p className="text-red-500 text-sm mt-1">{budgetError}</p>
+      )}
+    </div>
+
+<Button
+  className="w-full bg-[#c9b8b8] hover:bg-[#b8a5a5] text-[#4a3e3e]"
+  onClick={async () => {
+    const dataToSend = {
+      travelOption: selectedOption,
+      meal,
+      budgetRange: { min: minBudget, max: maxBudget },
+      formData: {
+        source: watch("source"),
+        destination: watch("destination"),
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(endDate, "yyyy-MM-dd"),
+        transport: watch("transport"),
+        transportClass: watch("transportClass"),
+        travelers: watch("travelers"),
+        duration: duration
+      }
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/travelplans/store", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer 2267a374bb9b908e98e106ec133a9d8c59bc63f7de321da3b5a114fc649d4009`
+        },
+        body: JSON.stringify(dataToSend)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Server Response:", result);
+        router.push("/dashboard"); 
+      } else {
+        console.error("Failed to store trip details");
+      }
+    } catch (error) {
+      console.error("Error sending data:", error);
+    }
+  }}
+>
+  Finalize Trip Details
+</Button>
+
         </div>
       )}
     </div>
