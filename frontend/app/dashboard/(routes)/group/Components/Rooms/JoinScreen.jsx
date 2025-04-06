@@ -21,7 +21,7 @@ const JoinScreen = ({ onJoin }) => {
       />
       <button
         onClick={handleJoin}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-sm"
+        className="bg-[#dfd0d0] hover:bg-[#d0c0c0] text-black font-bold py-2 px-4 rounded shadow-sm"
       >
         Join
       </button>
