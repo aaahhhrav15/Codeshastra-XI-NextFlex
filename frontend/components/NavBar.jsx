@@ -84,13 +84,12 @@ const NavBar = () => {
           className="rounded-full p-2 hover:bg-themebackground"
           onClick={handleSearch}
         >
-          <Search className="cursor-pointer" />
         </button>
         <span
           className="text-textlight cursor-pointer hidden md:block"
           style={{ color: "rgb(177, 185, 193)" }}
         >
-          Search (Ctrl+/)
+
         </span>
       </div>
       
