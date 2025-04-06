@@ -227,9 +227,9 @@ export default function MyTripsPage() {
   variant="ghost"
   className="text-[#7a6868] hover:text-[#4a3e3e] hover:bg-[#f0e8e8] p-0"
 >
-  <Link href={`/dashboard`}> 
-  {/* /${trip.id} */}
-    Go to Dashboard
+  <Link href={`/my-trips/${trip._id}`}> 
+  
+    Trip Summary
     <ArrowRight className="ml-1 h-4 w-4" />
   </Link>
 </Button>

@@ -1,6 +1,6 @@
 'use client'
 import { motion } from "framer-motion";
-import { data } from "./data/data"
+import { data } from "../../dashboard/(routes)/summary/data/data"
 
 export default function TripSummary() {
   console.log(data)
