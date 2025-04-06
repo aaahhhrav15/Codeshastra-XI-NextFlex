@@ -5,6 +5,5 @@ export const Menus = [
   { name: "Itinerary", href: "/dashboard/itinerary", logo: CalendarCheck2 },
   { name: "Map View", href: "/dashboard/map", logo: MapPinned },
   { name: "Group Colab", href: "/dashboard/group", logo: Users },
-  { name: "Budget", href: "/dashboard/budget", logo: Wallet },
-  { name: "Memories", href: "/dashboard/memories", logo: Star },
+
 ];
