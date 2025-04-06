@@ -17,8 +17,8 @@ L.Marker.prototype.options.icon = DEFAULT_ICON;
 const MapComponent = ({ sourceCoords, destCoords }) => {
   const [map, setMap] = useState(null);
 
-  const source = sourceCoords || { lat: 37.7749, lng: -122.4194 }; // San Francisco
-  const destination = destCoords || { lat: 34.0522, lng: -118.2437 }; // Los Angeles
+  const source = sourceCoords || { lat: 19.1073, lng: 72.8371 }; // San Francisco
+  const destination = destCoords || { lat: 18.7557, lng: 73.4091 }; // Los Angeles
 
   useEffect(() => {
     const mapContainer = document.getElementById('map');

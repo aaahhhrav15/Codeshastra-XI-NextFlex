@@ -8,8 +8,8 @@ const MapComponent = dynamic(() => import('@/components/MapComponent'), { ssr: f
 
 const MapsPage = () => {
   // You can pass coordinates as props if needed
-  const sourceCoords = { lat: 37.7749, lng: -122.4194 }; // San Francisco
-  const destCoords = { lat: 34.0522, lng: -118.2437 };   // Los Angeles
+  const sourceCoords = { lat: 19.1073, lng:72.8371 }; 
+  const destCoords = { lat: 18.7557, lng: 73.4091 };   // Los Angeles
 
   return (
     <div style={{ padding: '1rem' }}>
